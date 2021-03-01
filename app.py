@@ -119,13 +119,13 @@ def main():
 
     io_df = pd.DataFrame([{'Room Length (ft)':b13,
                          'Room Width (ft)':b14,
-                         'Probability of Infection': b71}])
+                         'Probability of Infection (%)': b71}])
     st.table(io_df)
 
     save_button = st.button('Add scenario to table')
 
-    saved_df = pd.DataFrame(columns=['Room Length (ft)','Room Width (ft)','Probability of Infection'])
-    state = SessionState.get(saved_df = pd.DataFrame(columns=['Room Length (ft)','Room Width (ft)','Probability of Infection']))
+    saved_df = pd.DataFrame(columns=['Room Length (ft)','Room Width (ft)','Probability of Infection (%)'])
+    state = SessionState.get(saved_df = pd.DataFrame(columns=['Room Length (ft)','Room Width (ft)','Probability of Infection (%)']))
     if save_button:
         state.saved_df = state.saved_df.append(io_df, ignore_index=True)
     st.dataframe(state.saved_df)
