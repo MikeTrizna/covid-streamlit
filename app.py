@@ -73,7 +73,8 @@ def main():
     b47 = st.sidebar.number_input('Breathing rate of susceptibles (m3/hr)', value=0.72)
     b51 = st.sidebar.number_input('Quanta exhalation rate of infected (quanta/hr)', value=10)
     b52 = st.sidebar.number_input('Exhalation mask efficiency (%)', value=50)
-    b53 = st.sidebar.number_input('Fraction of people w/ masks', value=100)
+ #   b53 = st.sidebar.number_input('Fraction of people w/ masks', value=100)
+    b53 = st.sidebar.slider('Percentage of people w/ masks', 0, 100, value = 100)
     b54 = st.sidebar.number_input('Inhalation mask efficiency', value=30)
 
     st.sidebar.markdown('### Scenario parameters')
@@ -109,18 +110,24 @@ def main():
     b71 = (1 - math.exp(-1 * b68)) * 100
 
     st.markdown('### Overall Results')
-    st.write(f'Probability of infection: {b71}%')
+    st.write(f'Probability of infection in a single event: {b71}%')
+    st.write(f'Probability of infection over {b26} repetitions:')
 
     with st.beta_expander(label='Intermediate Calculations'):
         st.write(f'First order loss rate: {b32} h-1')
         st.write(f'Ventilation rate per person: {b34} L/s/person')
 
+    io_df = pd.DataFrame([{'Room Length (ft)':b13,
+                         'Room Width (ft)':b14,
+                         'Probability of Infection': b71}])
+    st.table(io_df)
+
     save_button = st.button('Add scenario to table')
 
-    saved_df = pd.DataFrame(columns=['Col 1','Col 2'])
-    state = SessionState.get(saved_df = pd.DataFrame(columns=['Col 1','Col 2']))
+    saved_df = pd.DataFrame(columns=['Room Length (ft)','Room Width (ft)','Probability of Infection'])
+    state = SessionState.get(saved_df = pd.DataFrame(columns=['Room Length (ft)','Room Width (ft)','Probability of Infection']))
     if save_button:
-        state.saved_df = state.saved_df.append({'Col 1':1, 'Col 2':2}, ignore_index=True)
+        state.saved_df = state.saved_df.append(io_df, ignore_index=True)
     st.dataframe(state.saved_df)
     st.markdown(get_table_download_link(state.saved_df), unsafe_allow_html=True)    
 
