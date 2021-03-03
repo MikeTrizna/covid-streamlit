@@ -33,8 +33,16 @@ def main():
     with st.beta_expander(label='Explanation of how this works'):
         st.markdown('*Lots of links to additional sources, etc.*')
     st.sidebar.markdown('# Parameters')
+    option = st.sidebar.selectbox('Presets',
+                                 ('Rotunda', 'Office', 'Lab'))
+    preset_dict = {'Rotunda':{'length':250,
+                              'ach':4},
+                    'Office':{'length':25,
+                              'ach':2},
+                    'Lab':{'length':100,
+                              'ach':1}}
     st.sidebar.markdown('### Room measurements')
-    b13 = st.sidebar.number_input('Length of room (in ft)', value=25)
+    b13 = st.sidebar.number_input('Length of room (in ft)', value=preset_dict[option]['length'])
     b14 = st.sidebar.number_input('Width of room (in ft)', value=20)
     b16 = st.sidebar.number_input('Height of room (in ft)', value=10)
     ach_dict = {'Closed Windows (0.3)':0.3,
@@ -48,7 +56,7 @@ def main():
                 'Airplane (24.0)': 24.0}
     ach_select = st.sidebar.selectbox('Air changes per hour', 
                                list(ach_dict.keys()),
-                               index=3)
+                               index=preset_dict[option]['ach'])
     b28 = 3
     b28 = ach_dict[ach_select]
     merv_dict = {'None':0,
