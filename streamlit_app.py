@@ -29,9 +29,13 @@ def main():
     st.title('Covid-19 Aerosol Transmission Estimator')
     st.markdown('Based on version 3.4.22 of [https://tinyurl.com/covid-estimator](https://tinyurl.com/covid-estimator)')
     with st.beta_expander(label='Instructions', expanded=True):
-        st.markdown('*Detailed instructions here*')
+        with open('instructions.md', 'r') as instructions_md:
+            instructions_text = instructions_md.read()
+            st.markdown(instructions_text)
     with st.beta_expander(label='Explanation of how this works'):
-        st.markdown('*Lots of links to additional sources, etc.*')
+        with open('explanation.md','r') as explanation_md:
+            explanation_text = explanation_md.read()
+            st.markdown(explanation_text)
     st.sidebar.markdown('# Parameters')
     option = st.sidebar.selectbox('Presets',
                                  ('Rotunda', 'Office', 'Lab'))
@@ -138,8 +142,10 @@ def main():
         state.saved_df = state.saved_df.append(io_df, ignore_index=True)
     st.dataframe(state.saved_df)
     st.markdown(get_table_download_link(state.saved_df), unsafe_allow_html=True)    
-
-    st.markdown('*Lots of additional disclaimers down here*')
+    
+    with open('footer.md', 'r') as footer_md:
+        footer_text = footer_md.read()
+        st.markdown(footer_text)
 
 if __name__ == "__main__":
     main()
