@@ -1,1 +1,8 @@
-*Lots of links to additional sources, etc.*
+References:
+
+* Air changes per hour
+* MERV
+* Recirculation rate
+* Breathing rate
+* Quanta exhalation rate
+* Mask efficiency
