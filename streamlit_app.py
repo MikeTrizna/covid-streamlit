@@ -42,12 +42,12 @@ def main():
             st.markdown(explanation_text)
     st.sidebar.markdown('# Parameters')
     option = st.sidebar.selectbox('Presets',
-                                 ('Rotunda', 'Office', 'Lab'))
-    preset_dict = {'Rotunda':{'length':250,
+                                 ('Small breakroom', 'Medium conference room', 'Large exhibit hall'))
+    preset_dict = {'Small breakroom':{'length':250,
                               'ach':4},
-                    'Office':{'length':25,
+                    'Medium conference room':{'length':25,
                               'ach':2},
-                    'Lab':{'length':100,
+                    'Large exhibit hall':{'length':100,
                               'ach':1}}
     st.sidebar.markdown('### Room measurements')
     b13 = st.sidebar.number_input('Length of room (in ft)', value=preset_dict[option]['length'])
@@ -65,7 +65,6 @@ def main():
     ach_select = st.sidebar.selectbox('Air changes per hour', 
                                list(ach_dict.keys()),
                                index=preset_dict[option]['ach'])
-    b28 = 3
     b28 = ach_dict[ach_select]
     merv_dict = {'None':0,
                  'MERV 2': 2,
@@ -86,16 +85,54 @@ def main():
                                index=2)
     
     st.sidebar.markdown('### Advanced parameters')
-    b47 = st.sidebar.number_input('Breathing rate of susceptibles (m3/hr)', value=0.72)
-    b51 = st.sidebar.number_input('Quanta exhalation rate of infected (quanta/hr)', value=10)
-    b52 = st.sidebar.number_input('Exhalation mask efficiency (%)', value=50)
- #   b53 = st.sidebar.number_input('Fraction of people w/ masks', value=100)
-    b53 = st.sidebar.slider('Percentage of people w/ masks', 0, 100, value = 100)
-    b54 = st.sidebar.number_input('Inhalation mask efficiency', value=30)
+    breathing_dict = {'Resting (0.49)': 0.49,
+                      'Standing (0.54)': 0.54,
+                      'Light Exercise (1.38)': 1.38,
+                      'Heavy Exercise (3.30)': 3.30}
+    breathing_select = st.sidebar.selectbox('Breathing rate of susceptibles (m³/hr)', 
+                               list(breathing_dict.keys()),
+                               index=0)
+    b47 = breathing_dict[breathing_select]
+    #b47 = st.sidebar.number_input('Breathing rate of susceptibles (m3/hr)', value=0.72)
+    resp_dict = {'Oral Breathing': 0,
+                 'Speaking': 1,
+                 'Loudly Speaking': 2}
+    resp_select = st.sidebar.selectbox('Respiratory Activity:', 
+                               list(resp_dict.keys()),
+                               index=0)   
+    resp_index = resp_dict[resp_select]
+    resp_values = {'Resting (0.49)': [2.0, 9.4, 60.5],
+                   'Standing (0.54)': [2.3, 11.4, 65.1],
+                   'Light Exercise (1.38)': [5.6, 26.3, 170],
+                   'Heavy Exercise (3.30)': [13.5, 63.1, 408]}
+    b51 = resp_values[breathing_select][resp_index]
+#    b51 = st.sidebar.number_input('Quanta exhalation rate of infected (quanta/hr)', value=10)
+    b53 = st.sidebar.slider('Mask fit/compliance', 0, 100, value = 100)
+    mask_ex_dict = {'None (0%)': 0.0,
+                'Face shield (23%)': 23,
+                'Cloth mask (50%)': 50.0,
+                'Disposable surgical (65%)': 65.0,
+                'N95, KN95 masks (90%)': 90.0}
+    mask_ex_select = st.sidebar.selectbox(
+            'Mask efficiency (exhalation)',
+            options=list(mask_ex_dict.keys()),
+            index=3)
+    b52 = mask_ex_dict[mask_ex_select]
+    mask_in_dict = {'None (0%)': 0.0,
+                'Face shield (23%)': 23,
+                'Cloth mask (50%)': 50.0,
+                'Disposable surgical (65%)': 65.0,
+                'N95, KN95 masks (90%)': 90.0}
+    mask_in_select = st.sidebar.selectbox(
+            'Mask efficiency (inhalation)',
+            options=list(mask_in_dict.keys()),
+            index=3)    
+    b54 = mask_in_dict[mask_in_select]
+    #b52 = st.sidebar.number_input('Exhalation mask efficiency (%)', value=50)
+    #b54 = st.sidebar.number_input('Inhalation mask efficiency', value=30)
 
     st.sidebar.markdown('### Scenario parameters')
     b24 = st.sidebar.number_input('Duration of event (in min)', value=480)
-    b26 = st.sidebar.number_input('Number of repetitions of event', value=26)
     b38 = st.sidebar.number_input('Total number of people present', value=12)
     b39 = st.sidebar.number_input('Infective people', value=1)
 
@@ -127,7 +164,8 @@ def main():
 
     st.markdown('### Overall Results')
     st.write(f'Probability of infection in a single event: {b71}%')
-    st.write(f'Probability of infection over {b26} repetitions:')
+    #b26 = st.number_input('Number of repetitions of event', value=26)
+    #st.write(f'Probability of infection over {b26} repetitions:')
 
     with st.beta_expander(label='Intermediate Calculations'):
         st.write(f'First order loss rate: {b32} h-1')
