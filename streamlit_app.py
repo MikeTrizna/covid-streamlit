@@ -36,7 +36,7 @@ def main():
         with open('explanation.md','r') as explanation_md:
             explanation_text = explanation_md.read()
             st.markdown(explanation_text)
-   with st.beta_expander(label='Sample scenarios'):
+    with st.beta_expander(label='Sample scenarios'):
         with open('scenarios.md','r') as scenarios_md:
             scenarios_text = scenarios_md.read()
             st.markdown(scenarios_text)
