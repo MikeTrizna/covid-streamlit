@@ -43,16 +43,26 @@ def main():
     st.sidebar.markdown('# Parameters')
     option = st.sidebar.selectbox('Presets',
                                  ('Small breakroom', 'Medium conference room', 'Large exhibit hall'))
-    preset_dict = {'Small breakroom':{'length':250,
-                              'ach':4},
-                    'Medium conference room':{'length':25,
-                              'ach':2},
-                    'Large exhibit hall':{'length':100,
-                              'ach':1}}
+    preset_dict = {'Small breakroom':{'length':10,
+                            'width':12,
+                            'height':8,
+                            'ach':3,
+                            'merv':2},
+                    'Medium conference room':{'length':20,
+                            'width':15,
+                            'height':10,
+                              'ach':3,
+                              'merv':2},
+                    'Large exhibit hall':{'length':50,
+                            'width':50,
+                            'height':40,                    
+                              'ach':3,
+                              'merv':2}
+                    }
     st.sidebar.markdown('### Room measurements')
     b13 = st.sidebar.number_input('Length of room (in ft)', value=preset_dict[option]['length'])
-    b14 = st.sidebar.number_input('Width of room (in ft)', value=20)
-    b16 = st.sidebar.number_input('Height of room (in ft)', value=10)
+    b14 = st.sidebar.number_input('Width of room (in ft)', value=preset_dict[option]['width'])
+    b16 = st.sidebar.number_input('Height of room (in ft)', value=preset_dict[option]['height'])
     ach_dict = {'Closed Windows (0.3)':0.3,
                 'Open Windows (2.0)': 2.0,
                 'Mechanical Ventilation (3.0)': 3.0,
@@ -66,14 +76,16 @@ def main():
                                list(ach_dict.keys()),
                                index=preset_dict[option]['ach'])
     b28 = ach_dict[ach_select]
-    merv_dict = {'None':0,
-                 'MERV 2': 2,
-                 'MERV 6': 6,
-                 'MERV 17': 17}
-    merv_select = st.sidebar.select_slider(
+    merv_dict = {'None (MERV 0)':0,
+                 'Residential Window AC (MERV 2)': 2,
+                 'Residential/Commercial/Industrial (MERV 6)': 6,
+                 'Residential/Commercial/Hospital (MERV 10)': 10,
+                 'Hospital & General Surgery (MERV 14)': 14,
+                 'HEPA (MERV 17)': 17}
+    merv_select = st.sidebar.selectbox(
                 'Filtration System',
                 options=list(merv_dict.keys()),
-                value='MERV 6')
+                index=preset_dict[option]['merv'])
     recirc_dict = {'None (0)':0,
                 'Slow (0.3)': 0.3,
                 'Moderate (1.0)': 1.0,
