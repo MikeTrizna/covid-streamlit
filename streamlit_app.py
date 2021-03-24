@@ -179,6 +179,9 @@ def main():
     #b26 = st.number_input('Number of repetitions of event', value=26)
     #st.write(f'Probability of infection over {b26} repetitions:')
 
+    prob_formatted = '{:.2f}%'.format(b71)
+    st.write('<style>body { margin: 0; font-family: Arial, Helvetica, sans-serif;} .footer{padding: 10px 16px; background: #555; color: #f1f1f1; position:fixed;bottom:0;} .sticky { position: fixed; bottom: 0; width: 100%;} </style><div class="footer sticky" id="sticky-footer"><i>Based on input parameters,</i><br/>Probability of infection: '+prob_formatted+'</div>', unsafe_allow_html=True)
+
     with st.beta_expander(label='Intermediate Calculations'):
         st.write(f'First order loss rate: {b32} h-1')
         st.write(f'Ventilation rate per person: {b34} L/s/person')
