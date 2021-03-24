@@ -1,4 +1,4 @@
-## Large exhibit hall: 
+### Large exhibit hall: 
 Staff member spends 20 minutes quietly walking around a large exhibit hall, 9 other people also present in the hall, all masked, one person is infective.
 
 * Size of space: length: 50 ft, width: 50 ft, height: 40 ft
@@ -15,9 +15,9 @@ Staff member spends 20 minutes quietly walking around a large exhibit hall, 9 ot
 * Total number of people in the space: 10
 * Number of infected people in the space: 1
 
-### Probability of infection: 0.0005%
+---
 
-## Medium conference room: 
+### Medium conference room: 
 Staff member spends 60 minutes in a meeting with folks speaking loudly, everyone wearing masks, one person is infective.
 
 * Size of space: length: 20 ft, width: 15 ft, height: 10 ft
@@ -34,9 +34,9 @@ Staff member spends 60 minutes in a meeting with folks speaking loudly, everyone
 * Total number of people in the space: 15
 * Number of infected people in the space: 1
 
-### Probability of infection: 4.98%
+---
 
-## Small breakroom: 
+### Small breakroom: 
 Staff member eats lunch for 60 minutes in a breakroom with 4 other staff members, none wear masks, one is infective.
 
 * Size of space: length: 10 ft, width: 12 ft, height: 8 ft
@@ -52,7 +52,3 @@ Staff member eats lunch for 60 minutes in a breakroom with 4 other staff members
 * Number of repetitions: 0
 * Total number of people in the space: 5
 * Number of infected people in the space: 1
-
-### Probability of infection: 4.63%
-
-

@@ -27,8 +27,11 @@ def get_table_download_link(df):
 
 def main():
     st.title('Covid-19 Aerosol Transmission Estimator')
-    st.markdown('Based on version 3.4.22 of [https://tinyurl.com/covid-estimator](https://tinyurl.com/covid-estimator)')
-    with st.beta_expander(label='Instructions', expanded=True):
+
+    st.markdown("This web application calculates the estimated probability of infection in an indoor environment based on several factors.")
+    st.markdown("<< You can adjust these factors in the Parameters panel to the left.")
+    
+    with st.beta_expander(label='Detailed Instructions', expanded=False):
         with open('instructions.md', 'r') as instructions_md:
             instructions_text = instructions_md.read()
             st.markdown(instructions_text)
@@ -37,6 +40,7 @@ def main():
             scenarios_text = scenarios_md.read()
             st.markdown(scenarios_text)            
     with st.beta_expander(label='Explanation of how this works'):
+        st.markdown('Based on version 3.4.22 of [https://tinyurl.com/covid-estimator](https://tinyurl.com/covid-estimator)')
         with open('explanation.md','r') as explanation_md:
             explanation_text = explanation_md.read()
             st.markdown(explanation_text)
@@ -63,6 +67,14 @@ def main():
     b13 = st.sidebar.number_input('Length of room (in ft)', value=preset_dict[option]['length'])
     b14 = st.sidebar.number_input('Width of room (in ft)', value=preset_dict[option]['width'])
     b16 = st.sidebar.number_input('Height of room (in ft)', value=preset_dict[option]['height'])
+    
+    ### Calculating room volume
+    e13 = b13 * 0.305
+    e14 = b14 * 0.305
+    e15 = e13 * e14
+    e16 = b16 * 0.305
+    e17 = e13 * e14 * e16
+    
     ach_dict = {'Closed Windows (0.3)':0.3,
                 'Open Windows (2.0)': 2.0,
                 'Mechanical Ventilation (3.0)': 3.0,
@@ -99,26 +111,29 @@ def main():
     st.sidebar.markdown('### Advanced parameters')
     breathing_dict = {'Resting (0.49)': 0.49,
                       'Standing (0.54)': 0.54,
+                      'Singing (1.00)': 1.00,
                       'Light Exercise (1.38)': 1.38,
+                      'Moderate Exercise (2.35)': 2.35,
                       'Heavy Exercise (3.30)': 3.30}
     breathing_select = st.sidebar.selectbox('Breathing rate of susceptibles (m³/hr)', 
                                list(breathing_dict.keys()),
                                index=0)
     b47 = breathing_dict[breathing_select]
     #b47 = st.sidebar.number_input('Breathing rate of susceptibles (m3/hr)', value=0.72)
-    resp_dict = {'Oral Breathing': 0,
-                 'Speaking': 1,
-                 'Loudly Speaking': 2}
-    resp_select = st.sidebar.selectbox('Respiratory Activity:', 
+    resp_dict = {'Breathing (light) (1.1)': 1.10,
+                 'Breathing (normal) (4.2)': 4.20,
+                 'Breathing (heavy) (8.8)': 8.80,
+                 'Talking (whisper) (29.0)': 29.00,
+                 'Talking (normal) (72.0)': 72.00,
+                 'Talking (loud) (142.0)': 142.00,
+                 'Singing (970.0)': 970.0}
+    resp_select = st.sidebar.selectbox('Respiratory Activity: (q/m³)', 
                                list(resp_dict.keys()),
                                index=0)   
-    resp_index = resp_dict[resp_select]
-    resp_values = {'Resting (0.49)': [2.0, 9.4, 60.5],
-                   'Standing (0.54)': [2.3, 11.4, 65.1],
-                   'Light Exercise (1.38)': [5.6, 26.3, 170],
-                   'Heavy Exercise (3.30)': [13.5, 63.1, 408]}
-    b51 = resp_values[breathing_select][resp_index]
-#    b51 = st.sidebar.number_input('Quanta exhalation rate of infected (quanta/hr)', value=10)
+    b51 = resp_dict[resp_select] * b47
+
+    st.sidebar.markdown('q/h ='+'{:.2f}'.format(b51))
+
     b53 = st.sidebar.slider('Mask fit/compliance', 0, 100, value = 100)
     mask_ex_dict = {'None (0%)': 0.0,
                 'Face shield (23%)': 23,
@@ -126,20 +141,11 @@ def main():
                 'Disposable surgical (65%)': 65.0,
                 'N95, KN95 masks (90%)': 90.0}
     mask_ex_select = st.sidebar.selectbox(
-            'Mask efficiency (exhalation)',
+            'Mask efficiency',
             options=list(mask_ex_dict.keys()),
             index=3)
     b52 = mask_ex_dict[mask_ex_select]
-    mask_in_dict = {'None (0%)': 0.0,
-                'Face shield (23%)': 23,
-                'Cloth mask (50%)': 50.0,
-                'Disposable surgical (65%)': 65.0,
-                'N95, KN95 masks (90%)': 90.0}
-    mask_in_select = st.sidebar.selectbox(
-            'Mask efficiency (inhalation)',
-            options=list(mask_in_dict.keys()),
-            index=3)    
-    b54 = mask_in_dict[mask_in_select]
+    b54 = b52
     #b52 = st.sidebar.number_input('Exhalation mask efficiency (%)', value=50)
     #b54 = st.sidebar.number_input('Inhalation mask efficiency', value=30)
 
@@ -149,12 +155,7 @@ def main():
     b39 = st.sidebar.number_input('Infective people', value=1)
 
     ## Calculations
-    ### Calculating room volume
-    e13 = b13 * 0.305
-    e14 = b14 * 0.305
-    e15 = e13 * e14
-    e16 = b16 * 0.305
-    e17 = e13 * e14 * e16
+
 
     e24 = b24/60
 
@@ -173,18 +174,18 @@ def main():
     b68 = b67 * b47 * e24 * (1 - (b54/100) * (b53/100))
 
     b71 = (1 - math.exp(-1 * b68)) * 100
-
-    st.markdown('### Overall Results')
-    st.write(f'Probability of infection in a single event: {b71}%')
+    prob_formatted = '{:.2f}%'.format(b71)
+    st.markdown('## Overall Results')
+    st.write(f'Probability of infection in a single event: {prob_formatted}')
     #b26 = st.number_input('Number of repetitions of event', value=26)
     #st.write(f'Probability of infection over {b26} repetitions:')
 
-    prob_formatted = '{:.2f}%'.format(b71)
-    st.write('<style>body { margin: 0; font-family: Arial, Helvetica, sans-serif;} .footer{padding: 10px 16px; background: #555; color: #f1f1f1; position:fixed;bottom:0;} .sticky { position: fixed; bottom: 0; width: 100%;} </style><div class="footer sticky" id="sticky-footer"><i>Based on input parameters,</i><br/>Probability of infection: '+prob_formatted+'</div>', unsafe_allow_html=True)
 
-    with st.beta_expander(label='Intermediate Calculations'):
-        st.write(f'First order loss rate: {b32} h-1')
-        st.write(f'Ventilation rate per person: {b34} L/s/person')
+#    st.write('<style>body { margin: 0; font-family: Arial, Helvetica, sans-serif;} .footer{padding: 10px 16px; background: #555; color: #f1f1f1; position:fixed;bottom:0;} .sticky { position: fixed; bottom: 0; width: 100%;} </style><div class="footer sticky" id="sticky-footer"><i>Based on input parameters,</i><br/>Probability of infection: '+prob_formatted+'</div>', unsafe_allow_html=True)
+
+#    with st.beta_expander(label='Intermediate Calculations'):
+#        st.write(f'First order loss rate: {b32} h-1')
+#        st.write(f'Ventilation rate per person: {b34} L/s/person')
 
     io_df = pd.DataFrame([{'Room Length (ft)':b13,
                          'Room Width (ft)':b14,
