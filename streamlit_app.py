@@ -88,16 +88,18 @@ def main():
                                list(ach_dict.keys()),
                                index=preset_dict[option]['ach'])
     b28 = ach_dict[ach_select]
-    merv_dict = {'None (MERV 0)':0,
-                 'Residential Window AC (MERV 2)': 2,
-                 'Residential/Commercial/Industrial (MERV 6)': 6,
-                 'Residential/Commercial/Hospital (MERV 10)': 10,
-                 'Hospital & General Surgery (MERV 14)': 14,
-                 'HEPA (MERV 17)': 17}
+    merv_dict = {'MERV 0 (None)':0,
+                 'MERV 2 (Res. Window AC)': 2,
+                 'MERV 6 (Res./Comm./Industrial)': 6,
+                 'MERV 10 (Res./Comm./Hospital)': 10,
+                 'MERV 14 (Hospital & General Surgery)': 14,
+                 'MERV 17 (HEPA)': 17}
     merv_select = st.sidebar.selectbox(
                 'Filtration System',
                 options=list(merv_dict.keys()),
                 index=preset_dict[option]['merv'])
+    merv_value = merv_dict[merv_select]
+    
     recirc_dict = {'None (0)':0,
                 'Slow (0.3)': 0.3,
                 'Moderate (1.0)': 1.0,
@@ -107,6 +109,7 @@ def main():
     recirc_select = st.sidebar.selectbox('Recirculation Rate (per hour)', 
                                list(recirc_dict.keys()),
                                index=2)
+    recirc_rate = recirc_dict[recirc_select]
     
     st.sidebar.markdown('### Advanced parameters')
     breathing_dict = {'Resting (0.49)': 0.49,
@@ -151,13 +154,53 @@ def main():
 
     st.sidebar.markdown('### Scenario parameters')
     b24 = st.sidebar.number_input('Duration of event (in min)', value=480)
+    six_foot_cap = math.floor((b13 * b14) / 36)
+    st.sidebar.markdown(f'*Six foot distancing would accomodate **{six_foot_cap}** people in this space.*')
     b38 = st.sidebar.number_input('Total number of people present', value=12)
     b39 = st.sidebar.number_input('Infective people', value=1)
+    #immune = st.sidebar.number_input('Immune people', value=1)
+    #suscept = b38 - immune
 
     ## Calculations
 
 
     e24 = b24/60
+
+    ### Calculation aerosol filtration
+    # Source: https://www.ashrae.org/technical-resources/filtration-disinfection
+    # Table of MERV values corresponding to aerosol filtration efficiency, by different particle sizes (in microns)
+    merv_eff_dict = [
+        {'merv': 0, '0.3-1': 0, '1-3': 0, '3-10': 0},
+        {'merv': 1, '0.3-1': 0.01, '1-3': 0.01, '3-10': 0.01},
+        {'merv': 2, '0.3-1': 0.01, '1-3': 0.01, '3-10': 0.01},
+        {'merv': 3, '0.3-1': 0.01, '1-3': 0.01, '3-10': 0.01},
+        {'merv': 4, '0.3-1': 0.01, '1-3': 0.01, '3-10': 0.01},
+        {'merv': 5, '0.3-1': 0.01, '1-3': 0.01, '3-10': 0.2},
+        {'merv': 6, '0.3-1': 0.01, '1-3': 0.01, '3-10': 0.35},
+        {'merv': 7, '0.3-1': 0.01, '1-3': 0.01, '3-10': 0.50},
+        {'merv': 8, '0.3-1': 0.01, '1-3': 0.20, '3-10': 0.70},
+        {'merv': 9, '0.3-1': 0.01, '1-3': 0.35, '3-10': 0.75},
+        {'merv': 10, '0.3-1': 0.01, '1-3': 0.50, '3-10': 0.80},
+        {'merv': 11, '0.3-1': 0.2, '1-3': 0.65, '3-10': 0.85},
+        {'merv': 12, '0.3-1': 0.35, '1-3': 0.80, '3-10': 0.90},
+        {'merv': 13, '0.3-1': 0.50, '1-3': 0.85, '3-10': 0.90},
+        {'merv': 14, '0.3-1': 0.75, '1-3': 0.90, '3-10': 0.95},
+        {'merv': 15, '0.3-1': 0.85, '1-3': 0.90, '3-10': 0.95},
+        {'merv': 16, '0.3-1': 0.95, '1-3': 0.95, '3-10': 0.95},
+        {'merv': 17, '0.3-1': 0.9997, '1-3': 0.9997, '3-10': 0.9997},
+        {'merv': 18, '0.3-1': 0.99997, '1-3': 0.99997, '3-10': 0.99997},
+        {'merv': 19, '0.3-1': 0.999997, '1-3': 0.999997, '3-10': 0.999997},
+        {'merv': 20, '0.3-1': 0.9999997, '1-3': 0.9999997, '3-10': 0.9999997},
+    ]
+    aerosol_radius = 2
+    for item in merv_eff_dict:
+        if item['merv'] == merv_value:
+            if aerosol_radius < 1:
+                eff = item['0.3-1']
+            elif aerosol_radius < 3:
+                eff = item['1-3']
+            else:
+                eff = item['3-10']
 
     ### Calculating first order loss rate
     b29 = 0.62
@@ -176,7 +219,8 @@ def main():
     b71 = (1 - math.exp(-1 * b68)) * 100
     prob_formatted = '{:.2f}%'.format(b71)
     st.markdown('## Overall Results')
-    st.write(f'Probability of infection in a single event: {prob_formatted}')
+    st.markdown('*This result will update live as you change parameters in the sidebar.*')
+    st.markdown(f'Probability of infection in a single event: **{prob_formatted}**')
     #b26 = st.number_input('Number of repetitions of event', value=26)
     #st.write(f'Probability of infection over {b26} repetitions:')
 
