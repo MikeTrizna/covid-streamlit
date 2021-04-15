@@ -5,6 +5,7 @@ import numpy as np
 import math
 import base64
 from io import BytesIO
+from scipy import stats
 
 def to_excel(df):
     #From https://discuss.streamlit.io/t/how-to-download-file-in-streamlit/1806/12
@@ -46,7 +47,8 @@ def main():
             st.markdown(explanation_text)
     st.sidebar.markdown('# Parameters')
     option = st.sidebar.selectbox('Presets',
-                                 ('Small breakroom', 'Medium conference room', 'Large exhibit hall'))
+                                 ('Small breakroom', 'Medium conference room', 'Large exhibit hall'),
+                                 help='Tooltip')
     preset_dict = {'Small breakroom':{'length':10,
                             'width':12,
                             'height':8,
@@ -154,12 +156,13 @@ def main():
 
     st.sidebar.markdown('### Scenario parameters')
     b24 = st.sidebar.number_input('Duration of event (in min)', value=480)
+    si_cap = math.floor((b13 * b14) / 113)
     six_foot_cap = math.floor((b13 * b14) / 36)
-    st.sidebar.markdown(f'*Six foot distancing would accomodate **{six_foot_cap}** people in this space.*')
+    st.sidebar.markdown(f'*SI recommendations of 113 ft² per person would accomodate **{si_cap}** people in this space.*')
     b38 = st.sidebar.number_input('Total number of people present', value=12)
     b39 = st.sidebar.number_input('Infective people', value=1)
-    #immune = st.sidebar.number_input('Immune people', value=1)
-    #suscept = b38 - immune
+    immune = st.sidebar.number_input('Immune people', value=1)
+    suscept = b38 - immune - b39
 
     ## Calculations
 
@@ -217,10 +220,15 @@ def main():
     b68 = b67 * b47 * e24 * (1 - (b54/100) * (b53/100))
 
     b71 = (1 - math.exp(-1 * b68)) * 100
-    prob_formatted = '{:.2f}%'.format(b71)
+    indiv_prob_formatted = '{:.2f}%'.format(b71)
+    at_least_one_prob = 1 - stats.binom.cdf(0, suscept, b71)
+    at_least_one_formatted = '{:.2f}%'.format(at_least_one_prob)
+    
     st.markdown('## Overall Results')
     st.markdown('*This result will update live as you change parameters in the sidebar.*')
-    st.markdown(f'Each susceptible individual has **{prob_formatted}** probability of getting infected')
+
+    st.markdown(f'Each susceptible individual has **{indiv_prob_formatted}** probability of getting infected')
+    st.markdown(f'With **{suscept}** susceptible individuals, there is a  **{at_least_one_formatted}** probability that at least one person will get infected')
     #b26 = st.number_input('Number of repetitions of event', value=26)
     #st.write(f'Probability of infection over {b26} repetitions:')
 
