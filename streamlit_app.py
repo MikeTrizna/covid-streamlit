@@ -220,7 +220,7 @@ def main():
     prob_formatted = '{:.2f}%'.format(b71)
     st.markdown('## Overall Results')
     st.markdown('*This result will update live as you change parameters in the sidebar.*')
-    st.markdown(f'Probability of infection in a single event: **{prob_formatted}**')
+    st.markdown(f'Each susceptible individual has **{prob_formatted}** probability of getting infected')
     #b26 = st.number_input('Number of repetitions of event', value=26)
     #st.write(f'Probability of infection over {b26} repetitions:')
 
