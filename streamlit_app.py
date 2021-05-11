@@ -53,17 +53,17 @@ def main():
                             'width':12,
                             'height':8,
                             'ach':3,
-                            'merv':2},
+                            'merv':4},
                     'Medium conference room':{'length':20,
                             'width':15,
                             'height':10,
                               'ach':3,
-                              'merv':2},
+                              'merv':4},
                     'Large exhibit hall':{'length':50,
                             'width':50,
                             'height':40,                    
                               'ach':3,
-                              'merv':2}
+                              'merv':4}
                     }
     st.sidebar.markdown('### Room measurements')
     b13 = st.sidebar.number_input('Length of room (in ft)', value=preset_dict[option]['length'])
@@ -94,6 +94,7 @@ def main():
                  'MERV 2 (Res. Window AC)': 2,
                  'MERV 6 (Res./Comm./Industrial)': 6,
                  'MERV 10 (Res./Comm./Hospital)': 10,
+                 'MERV 13 (Smithsonian)': 13,
                  'MERV 14 (Hospital & General Surgery)': 14,
                  'MERV 17 (HEPA)': 17}
     merv_select = st.sidebar.selectbox(
