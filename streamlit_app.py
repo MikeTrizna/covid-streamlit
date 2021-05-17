@@ -51,36 +51,42 @@ def main():
                                  help='Tooltip')
     preset_dict = {'Small breakroom':{'length':10,
                             'width':12,
+                            'area':120,
                             'height':8,
                             'ach':3,
                             'merv':4},
                     'Medium conference room':{'length':20,
                             'width':15,
+                            'area':300,
                             'height':10,
                               'ach':3,
                               'merv':4},
                     'Large exhibit hall':{'length':50,
                             'width':50,
+                            'area':2500,
                             'height':40,                    
                               'ach':3,
                               'merv':4}
                     }
     st.sidebar.markdown('### Room measurements')
-    b13 = st.sidebar.number_input('Length of room (in ft)', value=preset_dict[option]['length'])
-    b14 = st.sidebar.number_input('Width of room (in ft)', value=preset_dict[option]['width'])
+
+    b15 = st.sidebar.number_input('Floor area of room (in ft²)', value=preset_dict[option]['area'])
+    #b14 = st.sidebar.number_input('Width of room (in ft)', value=preset_dict[option]['width'])
     b16 = st.sidebar.number_input('Height of room (in ft)', value=preset_dict[option]['height'])
     
     ### Calculating room volume
-    e13 = b13 * 0.305
-    e14 = b14 * 0.305
-    e15 = e13 * e14
+#    e13 = b13 * 0.305
+#    e14 = b14 * 0.305
+#    e15 = e13 * e14
+    e15 = b15 / 10.764
     e16 = b16 * 0.305
-    e17 = e13 * e14 * e16
+#    e17 = e13 * e14 * e16
+    e17 = e15 * e16
     
     ach_dict = {'Closed Windows (0.3)':0.3,
                 'Open Windows (2.0)': 2.0,
                 'Mechanical Ventilation (3.0)': 3.0,
-                'Open windows with fans (6.0)': 6.0,
+                'Smithsonian Standard (6.0)': 6.0,
                 'Better mechanical ventilation (8.0)': 8.0,
                 'Laboratory, Restaurant (9.0)': 9.0,
                 'Bar (15.0)': 15.0,
@@ -94,7 +100,7 @@ def main():
                  'MERV 2 (Res. Window AC)': 2,
                  'MERV 6 (Res./Comm./Industrial)': 6,
                  'MERV 10 (Res./Comm./Hospital)': 10,
-                 'MERV 13 (Smithsonian)': 13,
+                 'MERV 13 (Smithsonian Standard)': 13,
                  'MERV 14 (Hospital & General Surgery)': 14,
                  'MERV 17 (HEPA)': 17}
     merv_select = st.sidebar.selectbox(
@@ -157,8 +163,8 @@ def main():
 
     st.sidebar.markdown('### Scenario parameters')
     b24 = st.sidebar.number_input('Duration of event (in min)', value=480)
-    si_cap = math.floor((b13 * b14) / 113)
-    six_foot_cap = math.floor((b13 * b14) / 36)
+    si_cap = math.floor((b15) / 113)
+    six_foot_cap = math.floor((b15) / 36)
     st.sidebar.markdown(f'*SI recommendations of 113 ft² per person would accomodate **{si_cap}** people in this space.*')
     b38 = st.sidebar.number_input('Total number of people present', value=12)
     b39 = st.sidebar.number_input('Infective people', value=1)
@@ -240,8 +246,8 @@ def main():
 #        st.write(f'First order loss rate: {b32} h-1')
 #        st.write(f'Ventilation rate per person: {b34} L/s/person')
 
-    io_df = pd.DataFrame([{'Room Length (ft)':b13,
-                         'Room Width (ft)':b14,
+    io_df = pd.DataFrame([{'Room Area (sq. ft)':b15,
+                         'Room Height (ft)':b16,
                          'Probability of Infection (%)': b71}])
     st.table(io_df)
 
