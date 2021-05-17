@@ -7,6 +7,9 @@ import base64
 from io import BytesIO
 from scipy import stats
 
+import mpl_gauge
+
+
 def to_excel(df):
     #From https://discuss.streamlit.io/t/how-to-download-file-in-streamlit/1806/12
     output = BytesIO()
@@ -267,7 +270,7 @@ def main():
     b24 = st.sidebar.number_input('Duration of event (in min)', value=480)
     si_cap = math.floor((b15) / 113)
     six_foot_cap = math.floor((b15) / 36)
-    st.sidebar.markdown(f'*SI recommendations of 113 ft² per person would accomodate **{si_cap}** people in this space.*')
+#    st.sidebar.markdown(f'*SI recommendations of 113 ft² per person would accomodate **{si_cap}** people in this space.*')
     b38 = st.sidebar.number_input('Total number of people present', value=12)
     b39 = st.sidebar.number_input('Infective people', value=1)
     immune = st.sidebar.number_input('Immune people', value=1)
@@ -338,6 +341,12 @@ def main():
 
     st.markdown(f'Each susceptible individual has **{indiv_prob_formatted}** probability of getting infected')
     st.markdown(f'With **{suscept}** susceptible individuals, there is a  **{at_least_one_formatted}** probability that at least one person will get infected')
+
+    gauge_plot = mpl_gauge.gauge(labels=['Very Low','Low','Medium','High','Very High'],
+                   colors=['#2FCC71','#1F8449','#F4D03F','#F5B041','#C03A2B'], 
+                   arrow=2, title='Risk Level')
+    st.pyplot(gauge_plot)
+    
     #b26 = st.number_input('Number of repetitions of event', value=26)
     #st.write(f'Probability of infection over {b26} repetitions:')
 
