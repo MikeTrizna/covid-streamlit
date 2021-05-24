@@ -345,7 +345,7 @@ def main():
     gauge_plot = mpl_gauge.gauge(labels=['Very Low','Low','Medium','High','Very High'],
                    colors=['#2FCC71','#1F8449','#F4D03F','#F5B041','#C03A2B'], 
                    arrow=2, title='Risk Level')
-    st.pyplot(gauge_plot)
+    #st.pyplot(gauge_plot)
     
     #b26 = st.number_input('Number of repetitions of event', value=26)
     #st.write(f'Probability of infection over {b26} repetitions:')
