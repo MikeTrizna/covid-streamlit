@@ -8,6 +8,7 @@ from io import BytesIO
 from scipy import stats
 
 import mpl_gauge
+import plotly_gauge
 
 
 
