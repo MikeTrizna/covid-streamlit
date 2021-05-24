@@ -10,6 +10,7 @@ from scipy import stats
 import mpl_gauge
 
 
+
 def to_excel(df):
     #From https://discuss.streamlit.io/t/how-to-download-file-in-streamlit/1806/12
     output = BytesIO()
@@ -338,7 +339,6 @@ def main():
     
     st.markdown('## Overall Results')
     st.markdown('*This result will update live as you change parameters in the sidebar.*')
-
     st.markdown(f'Each susceptible individual has **{indiv_prob_formatted}** probability of getting infected')
     st.markdown(f'With **{suscept}** susceptible individuals, there is a  **{at_least_one_formatted}** probability that at least one person will get infected')
 
@@ -346,6 +346,10 @@ def main():
                    colors=['#2FCC71','#1F8449','#F4D03F','#F5B041','#C03A2B'], 
                    arrow=2, title='Risk Level')
     #st.pyplot(gauge_plot)
+
+    bullet_plot = plotly_gauge.plotly_bullet(b71)
+    bullet_plot.update_layout(height = 250)
+    st.write(bullet_plot)
     
     #b26 = st.number_input('Number of repetitions of event', value=26)
     #st.write(f'Probability of infection over {b26} repetitions:')
