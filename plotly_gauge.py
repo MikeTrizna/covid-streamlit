@@ -90,7 +90,7 @@ def plotly_bullet(probability):
     )
     fig.add_annotation(
         x=0.5,
-        y=1.8,
+        y=2,
         xanchor='center',
         yanchor='middle',
         text=f"Individual Risk Level: {probability:.4f}%",
@@ -100,6 +100,18 @@ def plotly_bullet(probability):
                     size=20
                 )
     )    
+    fig.add_annotation(
+        x=0.5,
+        y=1.6,
+        xanchor='center',
+        yanchor='middle',
+        text="<i>According to Brown University <a href='https://digitalhealth.med.brown.edu/news/2020-10-01/mycovidrisk'>Center for Digital Health</a></i>",
+        showarrow=False,
+        font=dict(
+                    color="black",
+                    size=14
+                )
+    )     
     fig.add_annotation(
         x=0.3,
         y=0.9,
