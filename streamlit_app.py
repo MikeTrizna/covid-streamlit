@@ -334,9 +334,9 @@ def main():
     b68 = b67 * b47 * e24 * (1 - (b54/100) * (b53/100))
 
     b71 = (1 - math.exp(-1 * b68)) * 100
-    indiv_prob_formatted = '{:.2f}%'.format(b71)
+    indiv_prob_formatted = '{:.4f}%'.format(b71)
     at_least_one_prob = 1 - stats.binom.cdf(0, suscept, b71)
-    at_least_one_formatted = '{:.2f}%'.format(at_least_one_prob)
+    at_least_one_formatted = '{:.4f}%'.format(at_least_one_prob)
     
     st.markdown('## Overall Results')
     st.markdown('*This result will update live as you change parameters in the sidebar.*')
@@ -347,10 +347,9 @@ def main():
                    colors=['#2FCC71','#1F8449','#F4D03F','#F5B041','#C03A2B'], 
                    arrow=2, title='Risk Level')
     #st.pyplot(gauge_plot)
-
     bullet_plot = plotly_gauge.plotly_bullet(b71)
     bullet_plot.update_layout(height = 250)
-    st.write(bullet_plot)
+    st.plotly_chart(bullet_plot, use_container_width=True, height=250)
     
     #b26 = st.number_input('Number of repetitions of event', value=26)
     #st.write(f'Probability of infection over {b26} repetitions:')
