@@ -37,19 +37,19 @@ def main():
     st.markdown("This web application calculates the estimated probability of infection in an indoor environment based on several factors.")
     st.markdown("<< You can adjust these factors in the Parameters panel to the left.")
     
-    with st.beta_expander(label='Detailed Instructions', expanded=False):
-        with open('instructions.md', 'r') as instructions_md:
-            instructions_text = instructions_md.read()
-            st.markdown(instructions_text)
-    with st.beta_expander(label='Sample scenarios'):
-        with open('scenarios.md','r') as scenarios_md:
-            scenarios_text = scenarios_md.read()
-            st.markdown(scenarios_text)            
-    with st.beta_expander(label='Explanation of how this works'):
-        st.markdown('Based on version 3.4.22 of [https://tinyurl.com/covid-estimator](https://tinyurl.com/covid-estimator)')
+    with st.beta_expander(label='How this works'):
         with open('explanation.md','r') as explanation_md:
             explanation_text = explanation_md.read()
             st.markdown(explanation_text)
+    with st.beta_expander(label='Preset scenarios'):
+        with open('scenarios.md','r') as scenarios_md:
+            scenarios_text = scenarios_md.read()
+            st.markdown(scenarios_text)            
+    with st.beta_expander(label='How to use this app', expanded=False):
+        with open('instructions.md', 'r') as instructions_md:
+            instructions_text = instructions_md.read()
+            st.markdown(instructions_text)
+
     st.sidebar.markdown('# Parameters')
     option = st.sidebar.selectbox('Presets',
                                  ('OCIO Video Conference Room, CapGal 4001', 'Freer Staff Library, G203', 'Break Room, SMS 118', 'Small exhibit gallery, Hirshhorn 202', 'Outer Ring Corridor, Hirshhorn 4th floor', 'Break Room, MSC, G2002B', 'LAB Processing Lab, MSC D1015', 'Classroom, NASM Udvar-Hazy 101.06B', 'Mary Baker Engen Restoration Hanger, NASM Udvar-Hazy 113.03', 'Family History Center, NMAAHC 2052', 'Health Services, NMAAHC C3050', 'Museum Shop, NMAAHC 1025', 'S C Johnson Conference Room A, NMAH 1014', 'Collections Workroom, NMAI LL-2144', 'Conservation Scientific Lab, NMAI E-3099', 'Anthropology  Library, NMNH 330', 'Fossil prep lab NMNH 25', 'LAB Break Room, NMNH W107', 'Education Center Classroom, QUAD 3037', 'Reptile Discovery Center, NZP F100A'),
