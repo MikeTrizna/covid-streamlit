@@ -32,28 +32,25 @@ def get_table_download_link(df):
 
 
 def main():
+    st.set_page_config(page_title='Covid-19 Aerosol Transmission Estimator',
+                       layout='wide',
+                       initial_sidebar_state='expanded')
     st.title('Covid-19 Aerosol Transmission Estimator')
 
-    st.markdown("This web application calculates the estimated probability of infection in an indoor environment based on several factors.")
+    st.markdown("This web application calculates the ***estimated probability of infection*** in an ***indoor environment*** based on several factors.")
     st.markdown("<< You can adjust these factors in the Parameters panel to the left.")
-    
-    with st.beta_expander(label='How this works'):
-        with open('explanation.md','r') as explanation_md:
-            explanation_text = explanation_md.read()
-            st.markdown(explanation_text)
-    with st.beta_expander(label='Preset scenarios'):
-        with open('scenarios.md','r') as scenarios_md:
-            scenarios_text = scenarios_md.read()
-            st.markdown(scenarios_text)            
-    with st.beta_expander(label='How to use this app', expanded=False):
-        with open('instructions.md', 'r') as instructions_md:
-            instructions_text = instructions_md.read()
-            st.markdown(instructions_text)
 
-    st.sidebar.markdown('# Parameters')
+    st.markdown("""As you make changes in the [Parameters](#parameters) panel, new results will be calculated 
+                 in the [Overall Results](#overall-results) section.""")
+
+    st.markdown("""You can read further detailed instructions in the [How to use this app](#how-to-use-this-app)
+                 section below. You can read about how the calculations are made in the [How this works](#how-this-works) 
+                 section below.""")
+
+    st.sidebar.markdown('## Parameters')
     option = st.sidebar.selectbox('Presets',
                                  ('OCIO Video Conference Room, CapGal 4001', 'Freer Staff Library, G203', 'Break Room, SMS 118', 'Small exhibit gallery, Hirshhorn 202', 'Outer Ring Corridor, Hirshhorn 4th floor', 'Break Room, MSC, G2002B', 'LAB Processing Lab, MSC D1015', 'Classroom, NASM Udvar-Hazy 101.06B', 'Mary Baker Engen Restoration Hanger, NASM Udvar-Hazy 113.03', 'Family History Center, NMAAHC 2052', 'Health Services, NMAAHC C3050', 'Museum Shop, NMAAHC 1025', 'S C Johnson Conference Room A, NMAH 1014', 'Collections Workroom, NMAI LL-2144', 'Conservation Scientific Lab, NMAI E-3099', 'Anthropology  Library, NMNH 330', 'Fossil prep lab NMNH 25', 'LAB Break Room, NMNH W107', 'Education Center Classroom, QUAD 3037', 'Reptile Discovery Center, NZP F100A'),
-                                 help='Tooltip')
+                                 )
     preset_dict = {'OCIO Video Conference Room, CapGal 4001':{'length':26.7,
                            'width':26.7,
                            'area':714,
@@ -361,19 +358,38 @@ def main():
 #        st.write(f'First order loss rate: {b32} h-1')
 #        st.write(f'Ventilation rate per person: {b34} L/s/person')
 
-    io_df = pd.DataFrame([{'Room Area (sq. ft)':b15,
-                         'Room Height (ft)':b16,
-                         'Probability of Infection (%)': b71}])
-    st.table(io_df)
+    # io_df = pd.DataFrame([{'Room Area (sq. ft)':b15,
+    #                      'Room Height (ft)':b16,
+    #                      'Probability of Infection (%)': b71}])
+    # st.table(io_df)
 
-    save_button = st.button('Add scenario to table')
+    # save_button = st.button('Add scenario to table')
 
-    saved_df = pd.DataFrame(columns=['Room Length (ft)','Room Width (ft)','Probability of Infection (%)'])
-    state = SessionState.get(saved_df = pd.DataFrame(columns=['Room Length (ft)','Room Width (ft)','Probability of Infection (%)']))
-    if save_button:
-        state.saved_df = state.saved_df.append(io_df, ignore_index=True)
-    st.dataframe(state.saved_df)
-    st.markdown(get_table_download_link(state.saved_df), unsafe_allow_html=True)    
+    # saved_df = pd.DataFrame(columns=['Room Length (ft)','Room Width (ft)','Probability of Infection (%)'])
+    # state = SessionState.get(saved_df = pd.DataFrame(columns=['Room Length (ft)','Room Width (ft)','Probability of Infection (%)']))
+    # if save_button:
+    #     state.saved_df = state.saved_df.append(io_df, ignore_index=True)
+    # st.dataframe(state.saved_df)
+    # st.markdown(get_table_download_link(state.saved_df), unsafe_allow_html=True)  
+
+        
+    st.markdown('## How this works')
+    with open('explanation.md','r') as explanation_md:
+        explanation_text = explanation_md.read()
+        st.markdown(explanation_text)
+        st.markdown("[Back to top](#covid-19-aerosol-transmission-estimator)")
+
+    st.markdown('## Preset scenarios')
+    with open('scenarios.md','r') as scenarios_md:
+        scenarios_text = scenarios_md.read()
+        st.markdown(scenarios_text)
+        st.markdown("[Back to top](#covid-19-aerosol-transmission-estimator)")            
+
+    st.markdown('## How to use this app')
+    with open('instructions.md', 'r') as instructions_md:
+        instructions_text = instructions_md.read()
+        st.markdown(instructions_text)
+        st.markdown("[Back to top](#covid-19-aerosol-transmission-estimator)")
     
     with open('footer.md', 'r') as footer_md:
         footer_text = footer_md.read()
