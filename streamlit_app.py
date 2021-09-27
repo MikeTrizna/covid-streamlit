@@ -36,8 +36,17 @@ def main():
                        layout='wide',
                        initial_sidebar_state='expanded')
     st.title('Covid-19 Aerosol Transmission Estimator')
+    hide_streamlit_style = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    </style>
+
+    """
+    st.markdown(hide_streamlit_style, unsafe_allow_html=True) 
 
     st.markdown("This web application calculates the ***estimated probability of infection*** in an ***indoor environment*** based on several factors.")
+    st.markdown("This application interface works best when on a desktop computer.")
     st.markdown("<< You can adjust these factors in the Parameters panel to the left.")
 
     st.markdown("""As you make changes in the [Parameters](#parameters) panel, new results will be calculated 
@@ -46,10 +55,24 @@ def main():
     st.markdown("""You can read further detailed instructions in the [How to use this app](#how-to-use-this-app)
                  section below. You can read about how the calculations are made in the [How this works](#how-this-works) 
                  section below.""")
-
     st.sidebar.markdown('## Parameters')
+
+    st.sidebar.markdown('### Covid variant')
+
+    variant_dict = {'Original: 1x':1,
+                'Alpha (B.1.1.7 UK): 1.3x': 1.3,
+                'Beta (B.1.351 South Africa): 1.25x': 1.25,
+                'Gamma (P.1 Brazil): 1.4x': 1.4,
+                'Delta (B.1.617.2 India): 2x': 2.0}
+    variant_select = st.sidebar.selectbox('COVID-19 Variant', 
+                               list(variant_dict.keys()),
+                               index=4)
+    variant_multiplier = variant_dict[variant_select]
+    
+    st.sidebar.markdown('### Room measurements')
+    
     option = st.sidebar.selectbox('Presets',
-                                 ('OCIO Video Conference Room, CapGal 4001', 'Freer Staff Library, G203', 'Break Room, SMS 118', 'Small exhibit gallery, Hirshhorn 202', 'Outer Ring Corridor, Hirshhorn 4th floor', 'Break Room, MSC, G2002B', 'LAB Processing Lab, MSC D1015', 'Classroom, NASM Udvar-Hazy 101.06B', 'Mary Baker Engen Restoration Hanger, NASM Udvar-Hazy 113.03', 'Family History Center, NMAAHC 2052', 'Health Services, NMAAHC C3050', 'Museum Shop, NMAAHC 1025', 'S C Johnson Conference Room A, NMAH 1014', 'Collections Workroom, NMAI LL-2144', 'Conservation Scientific Lab, NMAI E-3099', 'Anthropology  Library, NMNH 330', 'Fossil prep lab NMNH 25', 'LAB Break Room, NMNH W107', 'Education Center Classroom, QUAD 3037', 'Reptile Discovery Center, NZP F100A'),
+                                 ('OCIO Video Conference Room, CapGal 4001', 'Freer Staff Library, G203', 'Break Room, SMS 118', 'Small exhibit gallery, Hirshhorn 202', 'Outer Ring Corridor, Hirshhorn 4th floor', 'Break Room, MSC, G2002B', 'LAB Processing Lab, MSC D1015', 'Classroom, NASM Udvar-Hazy 101.06B', 'Mary Baker Engen Restoration Hanger, NASM Udvar-Hazy 113.03', 'Family History Center, NMAAHC 2052', 'Health Services, NMAAHC C3050', 'Museum Shop, NMAAHC 1025', 'S C Johnson Conference Room A, NMAH 1014', 'Collections Workroom, NMAI LL-2144', 'Conservation Scientific Lab, NMAI E-3099', 'Anthropology  Library, NMNH 330', 'Fossil Prep Lab NMNH 25', 'LAB Break Room, NMNH W107', 'Education Center Classroom, QUAD 3037', 'Reptile Discovery Center, NZP F100A'),
                                  )
     preset_dict = {'OCIO Video Conference Room, CapGal 4001':{'length':26.7,
                            'width':26.7,
@@ -172,7 +195,6 @@ def main():
                            'ach':3,
                            'merv':4}
                 }
-    st.sidebar.markdown('### Room measurements')
 
     b15 = st.sidebar.number_input('Floor area of room (in ft²)', value=preset_dict[option]['area'])
     #b14 = st.sidebar.number_input('Width of room (in ft)', value=preset_dict[option]['width'])
@@ -326,7 +348,7 @@ def main():
     b34 = e17 * (b28 + b31) * 1000 / 3600 / b38
 
     ### Calculating quanta
-    b66 = b51 * (1 - (b52/100) * (b53/100)) * b39
+    b66 = b51 * (1 - (b52/100) * (b53/100)) * b39 * variant_multiplier
     b67 = b66/b32/e17 * (1-(1/b32/e24) * (1 - math.exp(-1 * b32 * e24)))
     b68 = b67 * b47 * e24 * (1 - (b54/100) * (b53/100))
 
@@ -337,6 +359,10 @@ def main():
     
     st.markdown('## Overall Results')
     st.markdown('*This result will update live as you change parameters in the sidebar.*')
+    
+    people_option = st.radio("Scenario type",
+                             ('If an infected person enters',
+                              'Prevalence of infection'))
     st.markdown(f'Each susceptible individual has **{indiv_prob_formatted}** probability of getting infected')
     st.markdown(f'With **{suscept}** susceptible individuals, there is a  **{at_least_one_formatted}** probability that at least one person will get infected')
 
@@ -371,9 +397,8 @@ def main():
     #     state.saved_df = state.saved_df.append(io_df, ignore_index=True)
     # st.dataframe(state.saved_df)
     # st.markdown(get_table_download_link(state.saved_df), unsafe_allow_html=True)  
-
         
-    st.markdown('## How this works')
+    st.markdown('## How this app works')
     with open('explanation.md','r') as explanation_md:
         explanation_text = explanation_md.read()
         st.markdown(explanation_text)
