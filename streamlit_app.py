@@ -35,7 +35,9 @@ def main():
     st.set_page_config(page_title='Covid-19 Aerosol Transmission Estimator',
                        layout='wide',
                        initial_sidebar_state='expanded')
-    st.markdown("*Beta Version*")
+    st.markdown("***Beta Version***")
+
+    st.markdown("*This is a tool to assist in risk assessment and aid in decision making. Many variables can contribute to creating a safe work place. These estimates are based on current assumptions. This can be used by supervisors, safety managers and employees as a basis for communication and enhanced understanding.*")
     st.title('Covid-19 Aerosol Transmission Estimator')
     hide_streamlit_style = """
     <style>
